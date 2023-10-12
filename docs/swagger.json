@@ -1,0 +1,39 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/hello": {
+            "get": {
+                "description": "HelloWorld",
+                "tags": [
+                    "HelloWorld"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializers.Resp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serializers.Resp"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "serializers.Resp": {
+            "type": "object",
+            "properties": {
+                "Error": {},
+                "Result": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+definitions:
+  serializers.Resp:
+    properties:
+      Error: {}
+      Result: {}
+    type: object
+info:
+  contact: {}
+paths:
+  /hello:
+    get:
+      description: HelloWorld
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializers.Resp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serializers.Resp'
+      tags:
+      - HelloWorld
+swagger: "2.0"

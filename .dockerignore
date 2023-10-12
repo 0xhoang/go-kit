@@ -1,0 +1,4 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+deploy/kafka_insgetion/*
+deploy/kafka_insgetion_testnet/*

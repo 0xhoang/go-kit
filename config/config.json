@@ -1,0 +1,6 @@
+{
+  "env": "development",
+  "port": 8080,
+  "chain_endpoint": "http//:localhost",
+  "sentry_dsn": ""
+}
