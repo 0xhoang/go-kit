@@ -130,7 +130,7 @@ And with idea [AASM - State machines](https://github.com/aasm/aasm), we can add 
 Apply Worker Pool (Go routine) to resolved performance of job
 
 
-
+![alt text](state.jpg) 
 
 
   
