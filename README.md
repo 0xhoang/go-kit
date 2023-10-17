@@ -63,6 +63,8 @@ Example:
 $ ./server
 ``` 
 
+Auto run Migration Schema and Seed Data after service start [Code](https://github.com/0xhoang/go-kit/blob/master/database/migration.go#L22)
+
 #### View Swagger Docs
 
 ```
