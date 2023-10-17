@@ -10,7 +10,7 @@
 
  ```
  # Build Cli
- $ go build -o ./cli cmd/main.go
+ $ go build -o cli cmd/main.go
  
  $ ./cli
  
