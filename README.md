@@ -36,7 +36,7 @@ You can add more CLI to do something else
 
 > Required to run a project
 
-Config environment variables ->
+Config environment variables
 
 Edit `config/config.json` [Code](https://github.com/0xhoang/go-kit/blob/master/config/config.json)
 
