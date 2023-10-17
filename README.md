@@ -119,9 +119,9 @@ VALUES (NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'sub
 2. Result after run worker
 
 ```sql
-INSERT INTO `custodial_payment_address_actions` (created_at`, `updated_at`, `deleted_at`, `entity_id`, `from`, `to`, `amount`, `aasm_state`, `stage_status`, `error`, `err_count`, `completed_at`)
-VALUES
-	(NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'succeeded', 0, NULL, 0, '2023-10-17 08:53:52.029');
+select * from custodial_payment_address_actions;
+-> 
+(NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'succeeded', 0, NULL, 0, '2023-10-17 08:53:52.029');
 ```
 
 Change here is `aasm_state` from `submitted` to `succeeded`
