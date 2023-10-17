@@ -1,6 +1,8 @@
-# Go templates
+# The Go Gopher
 
-![alt text](fandom.jpeg)
+![alt text](fandom.jpeg) 
+
+[Pokemon collection](https://www.flaticon.com/packs/pokemon-go)
 
 # Tour of Go
 
@@ -26,6 +28,9 @@ $ ./cli create-competition
 $ ./cli create-team
 -> do something
 ```
+You can add more CLI to do something else
+[Code](https://github.com/0xhoang/go-kit/blob/master/cmd/data/root.go#L13)
+
 
 ### Run server
 
@@ -33,7 +38,7 @@ $ ./cli create-team
 
 Config environment variables ->
 
-Edit `config/config.json`
+Edit `config/config.json` [Code](https://github.com/0xhoang/go-kit/blob/master/config/config.json)
 
 ```json
 {
@@ -63,6 +68,7 @@ $ ./server
 ```
 http://localhost:8080/docs/index.html
 ```
+Apply Swagger documentation to explain all Apis [Code](https://github.com/0xhoang/go-kit/blob/master/docs/docs.go)
 
 #### Do something else
 
@@ -93,9 +99,12 @@ $ go
 test./...
 ```
 
+Apply mock data to unit test more exactly [Code](https://github.com/0xhoang/go-kit/blob/master/services/users_test.go)
+
+
 #### Worker
 
-Project build a worker management to run background jobs (also call database queue)
+Project build a worker management to run background jobs (also call database queue) [Code](https://github.com/0xhoang/go-kit/blob/master/task/eventservice.go)
 
 1. Create a event
 
@@ -118,7 +127,7 @@ VALUES
 Change here is `aasm_state` from `submitted` to `succeeded`
 
 And with idea [AASM - State machines](https://github.com/aasm/aasm), we can add more state to handle more case
-
+Apply Worker Pool (Go routine) to resolved performance of job
 
 
 
