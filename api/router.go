@@ -16,4 +16,13 @@ func (s *Server) Routes() {
 	s.g.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	s.g.GET("/hello", s.HelloWorld)
+
+	auth := s.g.Group("/auth")
+	auth.POST("/login", s.Login)
+
+	me := s.g.Group("/me")
+	me.Use(s.authMw.MiddlewareFunc())
+	{
+		me.GET("", s.Profile)
+	}
 }

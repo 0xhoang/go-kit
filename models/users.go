@@ -11,10 +11,10 @@ type User struct {
 	LastName   string
 	FullName   string
 	UserName   string
-	Email      string
+	Email      string `gorm:"uniqueIndex:idx_email;size:50"`
 	Password   string
-	Bio        string `gorm:"type:text"`
+	Bio        string
 
-	IsActive        bool
+	IsActive        bool `gorm:"index:idx_is_active"`
 	IsVerifiedEmail bool
 }

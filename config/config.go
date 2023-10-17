@@ -3,27 +3,32 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 )
+
+type JobInfo struct {
+	TimesRetry int `json:"times_retry"`
+}
 
 type Config struct {
 	Env       string `json:"env"`
 	Port      int    `json:"port"`
 	SentryDSN string `json:"sentry_dsn"`
 	//db
-	Db string
+	Db      string   `json:"db"`
+	JobInfo *JobInfo `json:"job_info"`
 }
 
 func ReadConfigAndArg() *Config {
-	err := godotenv.Load()
-	if err != nil {
-		//log.Fatal("Error loading .env file")
-	}
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
 
 	fileConfig := "config.json"
-	data, err := os.ReadFile("./config/" + fileConfig)
+
+	data, err := os.ReadFile(basepath + "/" + fileConfig)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -35,9 +40,6 @@ func ReadConfigAndArg() *Config {
 			log.Fatalf("Unmarshal err %v", err.Error())
 		}
 	}
-
-	tempCfg.Env = tempCfg.Env
-	tempCfg.Db = os.Getenv("MYSQL_CONNECT")
 
 	fmt.Println("============Config===============")
 	fmt.Println("env =", tempCfg.Env)

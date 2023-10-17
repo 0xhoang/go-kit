@@ -1,12 +1,53 @@
 definitions:
+  serializers.AuthByEmailReq:
+    properties:
+      Email:
+        type: string
+      Password:
+        type: string
+    required:
+    - Email
+    - Password
+    type: object
   serializers.Resp:
     properties:
       Error: {}
       Result: {}
     type: object
+  services.Error:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /auth/login:
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/serializers.AuthByEmailReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializers.Resp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/services.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/services.Error'
+      tags:
+      - Auth
   /hello:
     get:
       description: HelloWorld
@@ -21,4 +62,27 @@ paths:
             $ref: '#/definitions/serializers.Resp'
       tags:
       - HelloWorld
+  /me:
+    get:
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializers.Resp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/services.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/services.Error'
+      tags:
+      - Auth
 swagger: "2.0"

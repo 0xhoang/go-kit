@@ -1,9 +1,8 @@
 package api
 
 import (
-	"fmt"
-	"gitlab.com/idolauncher/go-template-kit/serializers"
-	service "gitlab.com/idolauncher/go-template-kit/services"
+	"github.com/0xhoang/go-kit/serializers"
+	service "github.com/0xhoang/go-kit/services"
 	"net/http"
 	"time"
 
@@ -13,24 +12,30 @@ import (
 )
 
 const (
-	userIDKey    = "id"
-	userEmailKey = "email"
+	userIDKey     = "id"
+	userEmailKey  = "email"
+	userFirstName = "name"
 )
+
+func (s *Server) WithAuthMw(authMw *jwt.GinJWTMiddleware) {
+	s.authMw = authMw
+}
 
 func (s *Server) AuthMiddleware(key string) *jwt.GinJWTMiddleware {
 	mw, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Key:         []byte(key),
-		Timeout:     time.Hour * 24 * 7, // * 52 * 10, // 10 year
-		MaxRefresh:  time.Hour * 24 * 7, // * 52 * 10, // 10 year,
+		Timeout:     time.Hour * 24 * 7, //7 days
+		MaxRefresh:  time.Hour * 24 * 7, //7 days
 		IdentityKey: userIDKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*serializers.UserByEmailResp); ok {
-				fmt.Printf("v = %+v\n", v)
 				return jwt.MapClaims{
-					userIDKey:    v.ID,
-					userEmailKey: v.Email,
+					userIDKey:     v.ID,
+					userEmailKey:  v.Email,
+					userFirstName: v.FirstName,
 				}
 			}
+
 			return jwt.MapClaims{}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -74,5 +79,6 @@ func (s *Server) AuthMiddleware(key string) *jwt.GinJWTMiddleware {
 			})
 		},
 	})
+
 	return mw
 }

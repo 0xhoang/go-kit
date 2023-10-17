@@ -1,8 +1,8 @@
-package dao
+package users
 
 import (
+	"github.com/0xhoang/go-kit/models"
 	"github.com/pkg/errors"
-	"gitlab.com/idolauncher/go-template-kit/models"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +21,20 @@ func (u *User) FindByID(id uint) (*models.User, error) {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
+		return nil, errors.Wrap(err, "u.db.Where.First")
+	}
+
+	return &user, nil
+}
+
+func (u *User) FindByEmail(email string) (*models.User, error) {
+	var user models.User
+
+	if err := u.db.Where("email = ?", email).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+
 		return nil, errors.Wrap(err, "u.db.Where.First")
 	}
 	return &user, nil

@@ -3,17 +3,20 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/0xhoang/go-kit/api"
+	"github.com/0xhoang/go-kit/common"
+	"github.com/0xhoang/go-kit/config"
+	"github.com/0xhoang/go-kit/dao/payment"
+	"github.com/0xhoang/go-kit/dao/users"
+	"github.com/0xhoang/go-kit/database"
+	"github.com/0xhoang/go-kit/services"
+	"github.com/0xhoang/go-kit/task"
 	"github.com/allegro/bigcache/v3"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/idolauncher/go-template-kit/api"
-	"gitlab.com/idolauncher/go-template-kit/common"
-	"gitlab.com/idolauncher/go-template-kit/config"
-	"gitlab.com/idolauncher/go-template-kit/dao"
-	"gitlab.com/idolauncher/go-template-kit/services"
+	"github.com/robfig/cron/v3"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
@@ -44,15 +47,15 @@ func main() {
 
 	logger := services.NewLogger(zapLog, sentryClient)
 
-	//uncomment if use db
-	//db := database.ConnectDb(cfg.MysqlDB)
-	//comment if use db
-	var db *gorm.DB
-	//uncomment if use migration db
-	/*err := database.Migration(db)
+	db := database.ConnectDb(cfg.Db)
+	err = database.Migration(db)
 	if err != nil {
 		log.Fatalf("migration: %v", err)
-	}*/
+	}
+
+	if err := database.AutoSeedingData(db); err != nil {
+		//log.Fatalf("seeding: %v", err)
+	}
 
 	life := time.Hour * 24 * 7 * 52 * 10 //10year
 	_, _ = bigcache.NewBigCache(bigcache.DefaultConfig(life))
@@ -66,23 +69,36 @@ func main() {
 		MaxAge:          12 * time.Hour,
 	}))
 
-	_ = dao.NewUser(db)
+	userDao := users.NewUser(db)
+	paymentDao := payment.NewPaymentAddressAction(db)
+
 	helloServiceSvc := services.NewHelloService(logger, cfg, db)
+	userSvc := services.NewUser(logger, cfg, userDao)
+
+	var cronJob = cron.New(cron.WithParser(cron.NewParser(
+		cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
+	)))
+
+	eventSvc := task.NewEventService(logger, cronJob, db, cfg, paymentDao)
 
 	svr := api.NewServer(
 		r,
 		nil,
 		logger,
-		helloServiceSvc)
+		helloServiceSvc,
+		userSvc,
+		eventSvc,
+	)
 
-	svr.AuthMiddleware("key")
+	authMw := svr.AuthMiddleware("key-secret")
+	svr.WithAuthMw(authMw)
 	svr.Routes()
 
-	port := cfg.Port
-	if cfg.Env != "development" {
-		port = 8888
-	}
+	//todo: worker
+	go eventSvc.StartEventPaymentAction()
+	cronJob.Start()
 
+	port := cfg.Port
 	address := fmt.Sprintf(":%d", port)
 	srv := &http.Server{
 		Addr:    address,

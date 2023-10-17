@@ -1,6 +1,8 @@
 {
   "env": "development",
   "port": 8080,
-  "chain_endpoint": "http//:localhost",
-  "sentry_dsn": ""
+  "db": "root:123456@tcp(localhost:3306)/db_testing?charset=utf8&parseTime=True&charset=utf8mb4&collation=utf8mb4_unicode_ci",
+  "job_info": {
+    "times_retry": 10
+  }
 }

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/0xhoang/go-kit/serializers"
+	"github.com/0xhoang/go-kit/services"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/idolauncher/go-template-kit/serializers"
-	"gitlab.com/idolauncher/go-template-kit/services"
 	"go.uber.org/zap"
 	"net/http"
 )

@@ -1,6 +1,6 @@
 package common
 
-import "gitlab.com/idolauncher/go-template-kit/docs"
+import "github.com/0xhoang/go-kit/docs"
 
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header

@@ -1,37 +1,56 @@
 package services
 
 import (
-	"github.com/pkg/errors"
-	"gitlab.com/idolauncher/go-template-kit/config"
-	"gitlab.com/idolauncher/go-template-kit/dao"
-	"gitlab.com/idolauncher/go-template-kit/models"
+	"github.com/0xhoang/go-kit/config"
+	"github.com/0xhoang/go-kit/dao/users"
+	"github.com/0xhoang/go-kit/models"
 	"go.uber.org/zap"
-	"math/rand"
-	"time"
+	"golang.org/x/crypto/bcrypt"
+	"regexp"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type User struct {
-	conf   *config.Config
 	logger *zap.Logger
-	r      *dao.User
+	conf   *config.Config
+	r      users.UserDaoInterface
 }
 
-func NewUser(conf *config.Config, logger *zap.Logger, r *dao.User) *User {
-	return &User{conf: conf, logger: logger, r: r}
+func NewUser(logger *zap.Logger, conf *config.Config, r users.UserDaoInterface) *User {
+	return &User{logger: logger, conf: conf, r: r}
 }
 
 func (u *User) FindByID(id uint) (*models.User, error) {
 	user, err := u.r.FindByID(id)
 	if err != nil {
-		return nil, errors.Wrap(err, "u.portalDao.FindByID")
+		return nil, err
 	}
+
 	return user, nil
 }
 
+func (u *User) isEmailValid(e string) bool {
+	if len(e) < 3 && len(e) > 254 {
+		return false
+	}
+	return emailRegex.MatchString(e)
+}
+
 func (u *User) AuthenticateByEmailPassword(email, password string) (*models.User, error) {
-	return nil, nil
+	if !u.isEmailValid(email) {
+		return nil, ErrInvalidEmail
+	}
+
+	user, _ := u.r.FindByEmail(email)
+
+	if user != nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+			return nil, ErrInvalidPassword
+		}
+
+		return user, nil
+	}
+
+	return nil, ErrEmailNotExists
 }
