@@ -135,6 +135,7 @@ select * from custodial_payment_address_logs where custodial_payment_action_id=1
 Change here is `aasm_state` from `submitted` to `succeeded`
 
 And with idea [AASM - State machines](https://github.com/aasm/aasm), we can add more state to handle more case
+
 Apply Worker Pool (Go routine) to resolved performance of job
 
 
