@@ -123,6 +123,12 @@ select * from custodial_payment_address_actions;
 -> 
 (NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'succeeded', 0, NULL, 0, '2023-10-17 08:53:52.029');
 ```
+Check tracking histotry
+```sql
+select * from custodial_payment_address_logs where custodial_payment_action_id=1;
+```
+![alt text](job_history.png)
+
 
 Change here is `aasm_state` from `submitted` to `succeeded`
 
