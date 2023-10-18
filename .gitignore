@@ -2,4 +2,4 @@
 .idea
 app.env
 cli
-server
+main
