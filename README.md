@@ -15,7 +15,7 @@
  # Build server
  $ go build -o main cmd/app/*.go
  
- $ ./server
+ $ ./main
  ```   
 
 ### Run CLI
@@ -58,7 +58,7 @@ Example:
 ```
 
 ```
-$ ./server
+$ ./main
 ``` 
 
 Auto run Migration Schema and Seed Data after service
