@@ -1,8 +1,6 @@
 # The Go Gopher
 
-![alt text](fandom.jpeg)
-
-[Pokemon collection](https://www.flaticon.com/packs/pokemon-go)
+![alt text](snake.png)
 
 # Tour of Go
 
