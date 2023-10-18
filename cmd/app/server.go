@@ -4,6 +4,7 @@ import (
 	"github.com/0xhoang/go-kit/cmd/task"
 	"github.com/0xhoang/go-kit/internal/must"
 	"github.com/0xhoang/go-kit/internal/services"
+	"github.com/allegro/bigcache/v3"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -15,14 +16,15 @@ type Server struct {
 	g      *gin.Engine
 	authMw *jwt.GinJWTMiddleware
 	logger *zap.Logger
+	cache  *bigcache.BigCache
 
 	helloService *services.HelloService
 	userSvc      *services.User
 	eventService *task.EventService
 }
 
-func NewServer(g *gin.Engine, authMw *jwt.GinJWTMiddleware, logger *zap.Logger, helloService *services.HelloService, userSvc *services.User, eventService *task.EventService) *Server {
-	return &Server{g: g, authMw: authMw, logger: logger, helloService: helloService, userSvc: userSvc, eventService: eventService}
+func NewServer(g *gin.Engine, authMw *jwt.GinJWTMiddleware, logger *zap.Logger, cache *bigcache.BigCache, helloService *services.HelloService, userSvc *services.User, eventService *task.EventService) *Server {
+	return &Server{g: g, authMw: authMw, logger: logger, cache: cache, helloService: helloService, userSvc: userSvc, eventService: eventService}
 }
 
 func (s *Server) ErrorException(c *gin.Context, err error) {

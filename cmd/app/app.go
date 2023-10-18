@@ -38,6 +38,8 @@ func initServer(g *gin.Engine, logger *zap.Logger, cfg *config.Config) error {
 		//log.Fatalf("seeding: %v", err)
 	}
 
+	cache, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(10*time.Minute))
+
 	//dao
 	userDao := dao.NewUser(db)
 	paymentDao := dao.NewPaymentAddressAction(db)
@@ -50,11 +52,13 @@ func initServer(g *gin.Engine, logger *zap.Logger, cfg *config.Config) error {
 		g,
 		nil,
 		logger,
+		cache,
 		helloServiceSvc,
 		userSvc,
 		eventSvc,
 	)
-	svr.AuthMiddleware("key-secret")
+
+	svr.AuthMiddleware(cfg.AuthenticationSecretKey)
 	svr.Routes()
 
 	//todo: worker
@@ -77,9 +81,6 @@ func main() {
 
 	defer logger.Sync()
 	defer sentry.Flush(2 * time.Second)
-
-	life := time.Hour * 24 * 7 * 52 * 10 //10year
-	_, _ = bigcache.NewBigCache(bigcache.DefaultConfig(life))
 
 	gin := gin.Default()
 	gin.Use(cors.New(cors.Config{

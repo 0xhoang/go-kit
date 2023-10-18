@@ -14,9 +14,10 @@ type JobInfo struct {
 }
 
 type Config struct {
-	Env       string `json:"env"`
-	Port      int    `json:"port"`
-	SentryDSN string `json:"sentry_dsn"`
+	Env                     string `json:"env"`
+	Port                    int    `json:"port"`
+	SentryDSN               string `json:"sentry_dsn"`
+	AuthenticationSecretKey string `json:"authentication_secret_key"`
 	//db
 	Db      string   `json:"db"`
 	JobInfo *JobInfo `json:"job_info"`
