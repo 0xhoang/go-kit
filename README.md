@@ -1,6 +1,6 @@
 # The Go Gopher
 
-![alt text](fandom.jpeg) 
+![alt text](fandom.jpeg)
 
 [Pokemon collection](https://www.flaticon.com/packs/pokemon-go)
 
@@ -10,12 +10,12 @@
 
  ```
  # Build Cli
- $ go build -o cli cmd/main.go
+ $  go build -o cli cmd/local/*.go
  
  $ ./cli
  
  # Build server
- $ go build -o server main.go
+ $ go build -o server cmd/server/*.go
  
  $ ./server
  ```   
@@ -28,9 +28,9 @@ $ ./cli create-competition
 $ ./cli create-team
 -> do something
 ```
+
 You can add more CLI to do something else
 [Code](https://github.com/0xhoang/go-kit/blob/master/cmd/data/root.go#L13)
-
 
 ### Run server
 
@@ -63,13 +63,15 @@ Example:
 $ ./server
 ``` 
 
-Auto run Migration Schema and Seed Data after service start [Code](https://github.com/0xhoang/go-kit/blob/master/database/migration.go#L22)
+Auto run Migration Schema and Seed Data after service
+start [Code](https://github.com/0xhoang/go-kit/blob/master/database/migration.go#L22)
 
 #### View Swagger Docs
 
 ```
 http://localhost:8080/docs/index.html
 ```
+
 Apply Swagger documentation to explain all Apis [Code](https://github.com/0xhoang/go-kit/blob/master/docs/docs.go)
 
 #### Do something else
@@ -103,10 +105,10 @@ test./...
 
 Apply mock data to unit test more exactly [Code](https://github.com/0xhoang/go-kit/blob/master/services/users_test.go)
 
-
 #### Worker
 
-Project build a worker management to run background jobs (also call database queue) [Code](https://github.com/0xhoang/go-kit/blob/master/task/eventservice.go)
+Project build a worker management to run background jobs (also call database
+queue) [Code](https://github.com/0xhoang/go-kit/blob/master/task/eventservice.go)
 
 1. Create a event
 
@@ -121,23 +123,27 @@ VALUES (NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'sub
 2. Result after run worker
 
 ```sql
-select * from custodial_payment_address_actions;
--> 
+select *
+from custodial_payment_address_actions;
+->
 (NULL, '2023-10-17 08:53:52.029', NULL, 1, 'userA', 'userB', '1000', 'succeeded', 0, NULL, 0, '2023-10-17 08:53:52.029');
 ```
-Check tracking histotry
-```sql
-select * from custodial_payment_address_logs where custodial_payment_action_id=1;
-```
-![alt text](job_history.png)
 
+Check tracking histotry
+
+```sql
+select *
+from custodial_payment_address_logs
+where custodial_payment_action_id = 1;
+```
+
+![alt text](job_history.png)
 
 Change here is `aasm_state` from `submitted` to `succeeded`
 
 And with idea [AASM - State machines](https://github.com/aasm/aasm), we can add more state to handle more case
 
 Apply Worker Pool (Go routine) to resolved performance of job
-
 
 ![alt text](state.jpg) 
 
