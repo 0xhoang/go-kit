@@ -13,7 +13,7 @@
  $ ./cli
  
  # Build server
- $ go build -o main cmd/server/*.go
+ $ go build -o main cmd/app/*.go
  
  $ ./server
  ```   

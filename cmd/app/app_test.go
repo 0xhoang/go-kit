@@ -13,10 +13,6 @@ import (
 	"testing"
 )
 
-func TestMainTestSuite(t *testing.T) {
-	suite.Run(t, new(MainTestSuite))
-}
-
 type MainTestSuite struct {
 	suite.Suite
 	userSvc     *services.User
@@ -78,4 +74,8 @@ func (suite *MainTestSuite) TestAuthenticateByEmailPassword() {
 	user1, err1 := suite.userSvc.AuthenticateByEmailPassword(email, "test")
 	suite.EqualValues(err1, nil)
 	suite.Equal(user1.Email, user.UserName)
+}
+
+func TestMainTestSuite(t *testing.T) {
+	suite.Run(t, new(MainTestSuite))
 }

@@ -96,13 +96,13 @@ func main() {
 
 	err = initServer(gin, logger, cfg)
 	if err != nil {
-		log.Fatalf("run: %v", err)
+		logger.Fatal("initServer", zap.Error(err))
 	}
 
 	go func() {
 		fmt.Printf("Listening and serving HTTP on %s\n", fmt.Sprintf(":%d", cfg.Port))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatal("router.Run: %s\n", zap.Error(err))
+			logger.Fatal("srv.ListenAndServe", zap.Error(err))
 		}
 	}()
 
@@ -115,15 +115,15 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	logger.Error("Shutting down server...")
+	logger.Warn("Shutting down server...")
 
 	// The context is used to inform the server it has 5 seconds to finish
 	// the request it is currently handling
 	ctxTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctxTimeout); err != nil {
-		logger.Fatal("Server forced to shutdown:", zap.Error(err))
+		logger.Fatal("Server forced to shutdown", zap.Error(err))
 	}
 
-	logger.Info("Server exiting")
+	logger.Warn("Server exiting")
 }
