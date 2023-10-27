@@ -56,6 +56,28 @@ func (e *GokitPublicService) SayHello(ctx context.Context, in *gen.HelloRequest)
 	return &gen.HelloReply{Message: in.Name + " world"}, nil
 }
 
+func (e *GokitPublicService) Auth(ctx context.Context, in *gen.LoginRequest) (*gen.LoginResponse, error) {
+	user, err := e.authenticatorByEmailPassword(in.Email, in.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	data := &serializers.UserInfo{
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+	}
+
+	expire := time.Now().Add(60 * time.Minute)
+	token, err := must.CreateNewWithClaims(data, e.cfg.AuthenticationSecretKey, expire)
+
+	return &gen.LoginResponse{
+		Token:   token,
+		Expired: fmt.Sprintf("%d", expire.Unix()),
+	}, nil
+}
+
 func (u *GokitPublicService) isEmailValid(e string) bool {
 	if len(e) < 3 && len(e) > 254 {
 		return false
@@ -78,26 +100,4 @@ func (u *GokitPublicService) authenticatorByEmailPassword(email, password string
 	}
 
 	return nil, must.ErrEmailNotExists
-}
-
-func (e *GokitPublicService) Auth(ctx context.Context, in *gen.LoginRequest) (*gen.LoginResponse, error) {
-	user, err := e.authenticatorByEmailPassword(in.Email, in.Password)
-	if err != nil {
-		return nil, err
-	}
-
-	data := &serializers.UserInfo{
-		ID:        user.ID,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-	}
-
-	expire := time.Now().Add(60 * time.Minute)
-	token, err := must.CreateNewWithClaims(data, e.cfg.AuthenticationSecretKey, expire)
-
-	return &gen.LoginResponse{
-		Token:   token,
-		Expired: fmt.Sprintf("%d", expire.Unix()),
-	}, nil
 }
