@@ -6,7 +6,6 @@ import (
 	"github.com/0xhoang/go-kit/config"
 	"github.com/0xhoang/go-kit/internal/dao"
 	"github.com/robfig/cron/v3"
-	log "github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -47,7 +46,7 @@ func (s *EventService) StartEventPaymentAction() {
 	})
 
 	if err != nil {
-		log.Fatalf("AddFunc error = %v", err.Error())
+		s.logger.Fatal("AddFunc error", zap.Error(err))
 	}
 
 	_, err = s.job.AddFunc("@every 5s", func() {
@@ -58,7 +57,7 @@ func (s *EventService) StartEventPaymentAction() {
 	})
 
 	if err != nil {
-		log.Fatalf("AddFunc error = %v", err.Error())
+		s.logger.Fatal("AddFunc error", zap.Error(err))
 	}
 
 	_, err = s.job.AddFunc("@every 5s", func() {
@@ -69,6 +68,6 @@ func (s *EventService) StartEventPaymentAction() {
 	})
 
 	if err != nil {
-		log.Fatalf("AddFunc error = %v", err.Error())
+		s.logger.Fatal("AddFunc error", zap.Error(err))
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/0xhoang/go-kit/internal/dao"
 	"github.com/0xhoang/go-kit/internal/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 type AasmStateContext struct {
@@ -64,13 +63,10 @@ func (a *ProcessEvent) Execute(eventCtx fsm.EventContext) (fsm.EventType, error)
 		return "", errors.New("dao not found")
 	}
 
-	log.Info("Execute, id:", event.models.ID)
-
-	withdraw := event.models
+	item := event.models
 
 	aasmState := fmt.Sprintf("%v", taskCommon.PROCESSING_STATE)
-	if err := event.dao.UpdateState(withdraw.ID, aasmState, int(common.StageStatus), 0); err != nil {
-		log.Error(fmt.Sprintf("Error updating log: id %v err %v", withdraw.ID, err))
+	if err := event.dao.UpdateState(item.ID, aasmState, int(common.StageStatus), 0); err != nil {
 		return "", err
 	}
 
@@ -89,12 +85,10 @@ func (a *ConfirmingEvent) Execute(eventCtx fsm.EventContext) (fsm.EventType, err
 		return "", errors.New("dao not found")
 	}
 
-	log.Info("Execute, id:", event.models.ID)
+	item := event.models
 
-	withdraw := event.models
 	aasmState := fmt.Sprintf("%v", taskCommon.CONFIRMING_STATE)
-	if err := event.dao.UpdateState(withdraw.ID, aasmState, int(common.StageStatus), 0); err != nil {
-		log.Error(fmt.Sprintf("Error updating log: id %v err %v", withdraw.ID, err))
+	if err := event.dao.UpdateState(item.ID, aasmState, int(common.StageStatus), 0); err != nil {
 		return "", err
 	}
 
@@ -113,12 +107,9 @@ func (a *SucceedEvent) Execute(eventCtx fsm.EventContext) (fsm.EventType, error)
 		return "", errors.New("dao not found")
 	}
 
-	log.Info("Execute, id:", event.models.ID)
-
-	withdraw := event.models
+	item := event.models
 	aasmState := fmt.Sprintf("%v", taskCommon.SUCCEED_STATE)
-	if err := event.dao.UpdateState(withdraw.ID, aasmState, int(common.StageStatus), 0); err != nil {
-		log.Error(fmt.Sprintf("Error updating log: id %v err %v", withdraw.ID, err))
+	if err := event.dao.UpdateState(item.ID, aasmState, int(common.StageStatus), 0); err != nil {
 		return "", err
 	}
 
@@ -137,12 +128,9 @@ func (a *ErroredEvent) Execute(eventCtx fsm.EventContext) (fsm.EventType, error)
 		return "", errors.New("dao not found")
 	}
 
-	log.Info("Execute, id:", event.models.ID)
-
-	withdraw := event.models
+	item := event.models
 	aasmState := fmt.Sprintf("%v", taskCommon.ERRORED_STATE)
-	if err := event.dao.UpdateState(withdraw.ID, aasmState, int(common.StageStatus), 0); err != nil {
-		log.Error(fmt.Sprintf("Error updating log: id %v err %v", withdraw.ID, err))
+	if err := event.dao.UpdateState(item.ID, aasmState, int(common.StageStatus), 0); err != nil {
 		return "", err
 	}
 
