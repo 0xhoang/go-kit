@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func createCompetition(apiSvc *services.HelloService) *cobra.Command {
+func createCompetition(apiSvc *services.GokitService) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "create-competition",
 		Args: func(cmd *cobra.Command, args []string) error {

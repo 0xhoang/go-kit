@@ -1,64 +1,79 @@
 package main
 
 import (
+	"context"
 	"github.com/0xhoang/go-kit/cmd/task"
+	"github.com/0xhoang/go-kit/common"
+	"github.com/0xhoang/go-kit/config"
+	"github.com/0xhoang/go-kit/internal/dao"
 	"github.com/0xhoang/go-kit/internal/must"
 	"github.com/0xhoang/go-kit/internal/services"
+	"github.com/0xhoang/go-kit/migration"
 	"github.com/allegro/bigcache/v3"
-	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-	"net/http"
-	"strconv"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
+	"github.com/robfig/cron/v3"
+	"google.golang.org/grpc"
+	"log"
+	"time"
 )
 
-type Server struct {
-	g      *gin.Engine
-	authMw *jwt.GinJWTMiddleware
-	logger *zap.Logger
-	cache  *bigcache.BigCache
+var cronJob = cron.New(cron.WithParser(cron.NewParser(
+	cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
+)))
 
-	helloService *services.HelloService
-	userSvc      *services.User
-	eventService *task.EventService
-}
+func main() {
+	common.SwaggerConfig()
 
-func NewServer(g *gin.Engine, authMw *jwt.GinJWTMiddleware, logger *zap.Logger, cache *bigcache.BigCache, helloService *services.HelloService, userSvc *services.User, eventService *task.EventService) *Server {
-	return &Server{g: g, authMw: authMw, logger: logger, cache: cache, helloService: helloService, userSvc: userSvc, eventService: eventService}
-}
+	var ctx = context.TODO()
+	cfg := config.ReadConfigAndArg()
 
-func (s *Server) ErrorException(c *gin.Context, err error) {
+	logger, sentry, err := must.NewLogger(cfg.SentryDSN)
 	if err != nil {
-		switch err.(type) {
-		case *must.Error:
-			c.JSON(http.StatusBadRequest, err.(*must.Error))
-			return
-		default:
-			s.logger.Error("s.ErrorResponseHandle", zap.Error(err))
-			c.JSON(http.StatusInternalServerError, must.ErrInternalServerError)
-			return
-		}
+		log.Fatalf("logger: %v", err)
 	}
-}
 
-func (s *Server) pagingFromContext(c *gin.Context) (int, int) {
-	var (
-		pageS  = c.DefaultQuery("page", "1")
-		limitS = c.DefaultQuery("limit", "10")
-		page   int
-		limit  int
-		err    error
+	defer logger.Sync()
+	defer sentry.Flush(2 * time.Second)
+
+	db := must.ConnectDb(cfg.Db)
+	err = migration.Migration(db)
+	if err != nil {
+		log.Fatalf("migration: %v", err)
+	}
+
+	if err := migration.AutoSeedingData(db); err != nil {
+		//log.Fatalf("seeding: %v", err)
+	}
+
+	_, _ = bigcache.New(context.Background(), bigcache.DefaultConfig(10*time.Minute))
+
+	//dao
+	userDao := dao.NewUser(db)
+	paymentDao := dao.NewPaymentAddressAction(db)
+
+	eventSvc := task.NewEventService(logger, cronJob, db, cfg, paymentDao)
+
+	go eventSvc.StartEventPaymentAction()
+	cronJob.Start()
+
+	middlewareAuth := NewMiddleware(cfg.AuthenticationPubSecretKey)
+	opt := []grpc.ServerOption{
+		grpc.StreamInterceptor(auth.StreamServerInterceptor(middlewareAuth.AuthMiddleware)),
+		grpc.UnaryInterceptor(auth.UnaryServerInterceptor(middlewareAuth.AuthMiddleware)),
+	}
+
+	must.NewServer(ctx, cfg,
+		opt,
+		services.NewGokitService(
+			logger,
+			cfg,
+			db,
+			userDao,
+		),
+		services.NewGokitPublicService(
+			logger,
+			cfg,
+			userDao,
+		),
 	)
-
-	page, err = strconv.Atoi(pageS)
-	if err != nil {
-		page = 1
-	}
-
-	limit, err = strconv.Atoi(limitS)
-	if err != nil {
-		limit = 10
-	}
-
-	return page, limit
 }

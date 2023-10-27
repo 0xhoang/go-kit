@@ -18,9 +18,10 @@ func main() {
 		log.Fatalf("logger: %v", err)
 	}
 
-	helloSvc := services.NewHelloService(
+	helloSvc := services.NewGokitService(
 		logger,
 		cfg,
+		nil,
 		nil,
 	)
 
@@ -34,7 +35,7 @@ func main() {
 	}
 }
 
-func newRootCmd(apiSvc *services.HelloService) *cobra.Command {
+func newRootCmd(apiSvc *services.GokitService) *cobra.Command {
 	var rootCmd = &cobra.Command{
 		Use: "./cli",
 	}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+import "google/api/annotations.proto";
+import "message.proto";
+
+// Here is the overall greeting service definition where we define all our endpoints
+service GoKitPublic {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    option (google.api.http) = {
+      post: "/sayhello"
+      body: "*"
+    };
+  }
+
+
+  rpc Auth(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/auth/login"
+      body: "*"
+    };
+  }
+}

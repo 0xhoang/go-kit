@@ -10,3 +10,7 @@ const (
 	ENV_DEVELOPMENT = "development"
 	ENV_PRODUCTION  = "production"
 )
+
+const (
+	CustomerKey = "customer"
+)

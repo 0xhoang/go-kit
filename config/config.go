@@ -14,10 +14,12 @@ type JobInfo struct {
 }
 
 type Config struct {
-	Env                     string `json:"env"`
-	Port                    int    `json:"port"`
-	SentryDSN               string `json:"sentry_dsn"`
-	AuthenticationSecretKey string `json:"authentication_secret_key"`
+	Env                        string `json:"env"`
+	GrpcPort                   int    `json:"grpc_port"`
+	Port                       int    `json:"port"`
+	SentryDSN                  string `json:"sentry_dsn"`
+	AuthenticationSecretKey    string `json:"authentication_secret_key"`
+	AuthenticationPubSecretKey string `json:"authentication_pub_secret_key"`
 	//db
 	Db      string   `json:"db"`
 	JobInfo *JobInfo `json:"job_info"`
@@ -40,6 +42,10 @@ func ReadConfigAndArg() *Config {
 		if err != nil {
 			log.Fatalf("Unmarshal err %v", err.Error())
 		}
+	}
+
+	if tempCfg.GrpcPort <= 0 {
+		tempCfg.GrpcPort = 9000
 	}
 
 	fmt.Println("============Config===============")

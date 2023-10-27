@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/api/annotations.proto";
+import "message.proto";
+
+// Here is the overall greeting service definition where we define all our endpoints
+service GoKit {
+    // Sends a greeting
+    rpc Profile (EmptyRequest) returns (UserInfoResponse) {
+        option (google.api.http) = {
+            get: "/me"
+        };
+    }
+}

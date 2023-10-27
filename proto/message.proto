@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+message EmptyRequest {}
+
+// The request message containing the user's name
+message HelloRequest {
+    string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+    string message = 1;
+}
+
+// The response message containing the greetings
+message LoginRequest {
+    string Email = 1;
+    string Password = 2;
+}
+
+message LoginResponse {
+    string Token = 1;
+    string Expired = 2;
+}
+
+message UserInfoResponse {
+    int64 ID = 1;
+    string UserName = 2;
+    string FirstName = 3;
+    string LastName = 4;
+    string Email = 5;
+}

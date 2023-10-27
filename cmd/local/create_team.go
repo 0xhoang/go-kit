@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func createTeam(apiSvc *services.HelloService) *cobra.Command {
+func createTeam(apiSvc *services.GokitService) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "create-team",
 		Args: func(cmd *cobra.Command, args []string) error {
