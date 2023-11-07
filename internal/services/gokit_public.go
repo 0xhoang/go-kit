@@ -48,6 +48,8 @@ func (e *GokitPublicService) RegisterHandler(ctx context.Context, mux *runtime.S
 	return nil
 }
 
+// remove authen
+
 func (g *GokitPublicService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	return ctx, nil
 }
