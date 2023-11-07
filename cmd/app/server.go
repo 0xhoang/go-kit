@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/0xhoang/go-kit/common"
 	"github.com/0xhoang/go-kit/config"
 	"github.com/0xhoang/go-kit/internal/dao"
 	"github.com/0xhoang/go-kit/internal/must"
@@ -16,8 +15,6 @@ import (
 )
 
 func main() {
-	common.SwaggerConfig()
-
 	var ctx = context.TODO()
 	cfg := config.ReadConfigAndArg()
 

@@ -4,17 +4,13 @@ RUN apk add gcc libc-dev ca-certificates linux-headers git
 
 WORKDIR /app
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
-
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
 COPY . .
 
-RUN swag init -g server.go
-
-RUN go build -o server *.go
+RUN go build -o server cmd/app/*.go
 
 FROM alpine:3.12.0
 
