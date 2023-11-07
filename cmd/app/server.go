@@ -18,7 +18,7 @@ func main() {
 	var ctx = context.TODO()
 	cfg := config.ReadConfigAndArg()
 
-	logger, sentry, err := must.NewLogger(cfg.SentryDSN, "app")
+	logger, sentry, err := must.NewLogger(cfg.SentryDSN, cfg.ServiceName+"-app")
 	if err != nil {
 		log.Fatalf("logger: %v", err)
 	}

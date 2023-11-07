@@ -15,6 +15,7 @@ type JobInfo struct {
 
 type Config struct {
 	Env                        string `json:"env"`
+	ServiceName                string `json:"service_name"`
 	GrpcPort                   int    `json:"grpc_port"`
 	Port                       int    `json:"port"`
 	SentryDSN                  string `json:"sentry_dsn"`

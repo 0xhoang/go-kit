@@ -16,7 +16,7 @@ var cronJob = cron.New(cron.WithParser(cron.NewParser(
 
 func main() {
 	cfg := config.ReadConfigAndArg()
-	logger, sentry, err := must.NewLogger(cfg.SentryDSN, "task")
+	logger, sentry, err := must.NewLogger(cfg.SentryDSN, cfg.ServiceName+"-task")
 	if err != nil {
 		log.Fatalf("logger: %v", err)
 	}
