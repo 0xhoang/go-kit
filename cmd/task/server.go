@@ -7,6 +7,7 @@ import (
 	"github.com/0xhoang/go-kit/migration"
 	"github.com/robfig/cron/v3"
 	"log"
+	"time"
 )
 
 var cronJob = cron.New(cron.WithParser(cron.NewParser(
@@ -15,10 +16,13 @@ var cronJob = cron.New(cron.WithParser(cron.NewParser(
 
 func main() {
 	cfg := config.ReadConfigAndArg()
-	logger, _, err := must.NewLogger(cfg.SentryDSN, "task")
+	logger, sentry, err := must.NewLogger(cfg.SentryDSN, "task")
 	if err != nil {
 		log.Fatalf("logger: %v", err)
 	}
+
+	defer logger.Sync()
+	defer sentry.Flush(2 * time.Second)
 
 	db := must.ConnectDb(cfg.Db)
 	err = migration.Migration(db)
