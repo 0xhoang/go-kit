@@ -13,7 +13,7 @@ import (
 
 func main() {
 	cfg := config.ReadConfigAndArg()
-	logger, _, err := must.NewLogger(cfg.SentryDSN)
+	logger, _, err := must.NewLogger(cfg.SentryDSN, "local")
 	if err != nil {
 		log.Fatalf("logger: %v", err)
 	}

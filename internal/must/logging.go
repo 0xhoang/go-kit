@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(sentryDSN string) (*zap.Logger, *sentry.Client, error) {
+func NewLogger(sentryDSN string, serviceName string) (*zap.Logger, *sentry.Client, error) {
 	zapLog, _ := zap.NewProduction()
 
 	sentryClient, err := sentry.NewClient(sentry.ClientOptions{
@@ -25,7 +25,7 @@ func NewLogger(sentryDSN string) (*zap.Logger, *sentry.Client, error) {
 		EnableBreadcrumbs: true,               // enable sending breadcrumbs to Sentry
 		BreadcrumbLevel:   zapcore.InfoLevel,  // at what level should we sent breadcrumbs to sentry
 		Tags: map[string]string{
-			"service": "api-service",
+			"service": serviceName,
 		},
 	}
 

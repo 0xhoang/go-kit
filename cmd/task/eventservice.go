@@ -1,4 +1,4 @@
-package task
+package main
 
 import (
 	taskCommon "github.com/0xhoang/go-kit/cmd/task/common"

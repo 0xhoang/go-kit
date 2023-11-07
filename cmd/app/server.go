@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/0xhoang/go-kit/cmd/task"
 	"github.com/0xhoang/go-kit/common"
 	"github.com/0xhoang/go-kit/config"
 	"github.com/0xhoang/go-kit/internal/dao"
@@ -11,15 +10,10 @@ import (
 	"github.com/0xhoang/go-kit/migration"
 	"github.com/allegro/bigcache/v3"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
-	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"log"
 	"time"
 )
-
-var cronJob = cron.New(cron.WithParser(cron.NewParser(
-	cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
-)))
 
 func main() {
 	common.SwaggerConfig()
@@ -27,7 +21,7 @@ func main() {
 	var ctx = context.TODO()
 	cfg := config.ReadConfigAndArg()
 
-	logger, sentry, err := must.NewLogger(cfg.SentryDSN)
+	logger, sentry, err := must.NewLogger(cfg.SentryDSN, "app")
 	if err != nil {
 		log.Fatalf("logger: %v", err)
 	}
@@ -49,13 +43,6 @@ func main() {
 
 	//dao
 	userDao := dao.NewUser(db)
-	paymentDao := dao.NewPaymentAddressAction(db)
-
-	eventSvc := task.NewEventService(logger, cronJob, db, cfg, paymentDao)
-
-	go eventSvc.StartEventPaymentAction()
-	cronJob.Start()
-
 	middlewareAuth := NewMiddleware(cfg.AuthenticationPubSecretKey)
 	opt := []grpc.ServerOption{
 		grpc.StreamInterceptor(auth.StreamServerInterceptor(middlewareAuth.AuthMiddleware)),
