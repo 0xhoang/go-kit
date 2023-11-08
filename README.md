@@ -1,6 +1,6 @@
 # The Go Gopher
 
-![alt text](snake.png)
+![alt text](docs/snake.png)
 
 # Tour of Go
 
@@ -135,7 +135,7 @@ from custodial_payment_address_logs
 where custodial_payment_action_id = 1;
 ```
 
-![alt text](job_history.png)
+![alt text](docs/job_history.png)
 
 Change here is `aasm_state` from `submitted` to `succeeded`
 
@@ -143,7 +143,7 @@ And with idea [AASM - State machines](https://github.com/aasm/aasm), we can add 
 
 Apply Worker Pool (Go routine) to resolved performance of job
 
-![alt text](state.jpg) 
+![alt text](docs/state.jpg) 
 
 
   
