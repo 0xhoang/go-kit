@@ -1,4 +1,4 @@
-FROM golang:1.16.9-alpine3.14 AS builder
+FROM golang:1.20.11-alpine3.18 AS builder
 
 RUN apk add gcc libc-dev ca-certificates linux-headers git
 
@@ -18,7 +18,7 @@ RUN apk add --no-cache ca-certificates curl
 
 WORKDIR /app
 
-COPY --from=builder /config/config.json ./config/config.json
+COPY --from=builder /app/config/config.json ./config/config.json
 COPY --from=builder /app/server .
 
 RUN chmod +x ./server
