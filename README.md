@@ -97,8 +97,7 @@ curl
 #### Run test
 
 ```azure
-$ go
-test./...
+$ go test ./...
 ```
 
 Apply mock data to unit test more exactly [Code](https://github.com/0xhoang/go-kit/blob/master/services/users_test.go)

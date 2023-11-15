@@ -21,7 +21,5 @@ WORKDIR /app
 COPY --from=builder /config/config.json ./config/config.json
 COPY --from=builder /app/server .
 
-COPY --from=builder /app/docs/ /app/docs/
-
 RUN chmod +x ./server
 CMD ["./server"]
